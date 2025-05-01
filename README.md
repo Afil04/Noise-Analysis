@@ -1,64 +1,65 @@
-# Dokumentasi Probability Power Spectral Density
+# Probability Power Spectral Density Documentation
 
-## 📘 Pengantar
-Repositori ini berisi dua bagian utama kode Python untuk pengolahan dan analisis data seismik menggunakan pustaka **ObsPy**:
+## 📘 Introduction
+This repository contains two main parts of Python code for processing and analyzing seismic data using the **ObsPy**:
 
-1. **Penggabungan data mSEED** dari beberapa sumber (stasiun atau waktu berbeda).
-2. **Analisis Probability Power Spectral Density (PPSD)** untuk memvisualisasikan spektrum noise.
+1. **Merging mSEED data** from multiple sources (stations or different times).
+2. **Probability Power Spectral Density (PPSD) analysis** to visualize the noise spectrum.
 
-Setiap bagian dijelaskan langkah per langkah agar mudah dipelajari.
+Each section is explained step-by-step to ensure easy learning.
 
 ---
 
-## 1. Penggabungan File mSEED
-###  Tujuan:
-Menggabungkan dua file MiniSEED (`.mseed`) yang berasal dari stasiun atau waktu yang sama, agar data yang diperoleh menjadi kontinu.
-###  Penjelasan Kode:
-Import fungsi read() dari Obspy untuk membaca file data seismik , lalu definisikan path ke file pertama.
+## 1. Merging mSEED Files
+###  Objective:
+To merge two MiniSEED (`.mseed`) files from the same station or time to create continuous data.
+### Code Explanation:
+Import the `read()` function from ObsPy to read seismic data files, then define the path to the first file.
 ```python
 from obspy import read
 file1 = "CTR0_EHZ_VG_00.011000.mseed"
 file1 = "CTR0_EHZ_VG_00.012000.mseed"
 ```
-file mSEED biasanya dinamai mengikuti format standar yang mencerminkan informasi metadata. Untuk menggabungkan data dengan jumlah file atau folder yang lebih dari satu, maka diperlukan path file selanjutnya untuk melakukan penggabungan data 
+mSEED files are typically named following a standard format reflecting metadata information. To merge data from multiple files or folders, the paths for the subsequent files are required.
+
 ```python
 st1 = read(file1)  
 st2 = read(file2)  
 ```
-Baca file path pertama dan kedua lalu gabungkan st1 dan st2 untuk menjadi satu stream.
+Read the paths of the first and second files, then merge `st1` and `st2` into a single stream.
 ```python
 st.merge(method=1)  
 output_file = "merged_file.mseed"  
 st.write(output_file, format="MSEED")  
 print(f"File mSEED berhasil digabungkan menjadi: {output_file}") 
 ```
-Proses merge dengan `method=1` yang akan menginterpolasi bila ada overlap atau gap. Simpan hasil gabungan stream ke file baru dengan nama `merged_file.mseed.` Tampilkan konfirmasi di konsol bahwa file berhasil dibuat.
+The merge process uses `method=1`, which will interpolate if there is overlap or a gap. Save the merged stream into a new file named `merged_file.mseed.` A confirmation will be displayed in the console that the file has been created.
 ```python
 1 Trace(s) In STream:
 VG.CTR0.00.EHZ | 2024-12-7 6:49:59.000000 Z - 2024-12-14 7:00:01.000000 Z | 100.0 Hz, 8700201 samples
 ```
 ##  2. Probability Power Spectral Density (PPSD)
-###  Tujuan:
-Menggunakan metode PPSD untuk melihat karakteristik spektrum noise dari data seismik.
-### Penjelasan Kode:
-Mengimpor fungsi untuk membaca waveform dan metadata XML.
+###  Objective:
+Use the PPSD method to observe the noise spectrum characteristics of seismic data.
+### Code Explanation:
+Import functions to read waveforms and XML metadata.
 ```python
 from obspy import read, read_inventory
 st = read("CTR0.EHZ.VG.00..mseed")
 tr = st.select(id="VG.CTRO.00.EHZ")[0]
 inv = read_inventory("CTR0.EHZ.VG.00.xml")
 ```
-Untuk mengetahui informasi dan spesifikasi data seismik dapat menggunakan `print(st.__str__(extended=True))`. Selanjutnya membaca metadata respons instrumen untuk kanal tersebut dan Membuat objek `PPSD` dengan metadata. 
+To obtain information and specifications about the seismic data, you can use `print(st.__str__(extended=True))`. Then, read the instrument response metadata for the channel and create a `PPSD` object with the metadata.
 ```python
 from obspy.signal import PPSD
 ppsd = PPSD(tr.stats, metadata=inv)
 ```
-Menambahkan stream data ke dalam PPSD untuk analisis.
+Add the data stream to the PPSD for analysis.
 ```python
 ppsd.add(st)
 >>True
 ```
-Menampilkan hasil PPSD standar dan kumulatif.
+Display both standard and cumulative PPSD results.
 ```python
 ppsd.plot()
 ppsd.plot(cumulative=True)
@@ -66,7 +67,7 @@ ppsd.plot(cumulative=True)
 ![Plot PPSD](CTR0_2024full.png)
 
 ---
-Untuk melihat distribusi noise dapat menggunakan colormap standar PQLX untuk visualisasi.
+To visualize the noise distribution, you can use the standard PQLX colormap.
 ```python
 from obspy.imaging.cm import pqlx
 ppsd.plot(cmap=pqlx)
@@ -74,8 +75,8 @@ ppsd.plot(cmap=pqlx)
 ![Plot PPSD](CTR0_7hari_PSD.png)
 
 
-## Penutup
-Dokumentasi ini diharapkan dapat memberikan pemahaman yang lebih terstruktur mengenai proses penggabungan data seismik dan analisis spektral menggunakan metode PPSD dengan bantuan pustaka ObsPy. Langkah-langkah yang dijelaskan secara terperinci bertujuan untuk membantu pengguna, khususnya pemula, agar dapat memahami logika kerja di balik pemrosesan data mSEED dan pentingnya representasi statistik dalam mengevaluasi kualitas sinyal seismik. Dengan pendekatan ini, diharapkan proses analisis data dapat berjalan lebih efisien dan akurat, serta menjadi dasar kuat untuk analisis lanjutan seperti monitoring seismik atau pemodelan sumber gempa.
+## Conclusion
+This documentation aims to provide a structured understanding of the seismic data merging process and spectral analysis using the PPSD method with the help of the ObsPy library. The detailed steps are designed to assist users, especially beginners, in understanding the logic behind processing mSEED data and the importance of statistical representation in evaluating seismic signal quality. With this approach, it is hoped that the data analysis process can be more efficient and accurate, serving as a strong foundation for further analyses such as seismic monitoring or earthquake source modeling.
 
-Ucapan terima kasih saya sampaikan kepada instansi yang telah menyediakan akses data seismik, serta kepada semua pihak yang telah mendukung tersusunnya dokumentasi dan pengolahan data ini. Tanpa kontribusi data dan dukungan teknis dari berbagai pihak, proses pembelajaran dan penelitian ini tidak akan berjalan dengan optimal.
+I would like to express my gratitude to the institutions that provided access to seismic data and to everyone who supported the development of this documentation and data processing. Without the contribution of data and technical support from various parties, this learning and research process would not have been as optimal.
 
