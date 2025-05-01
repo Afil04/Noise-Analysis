@@ -24,7 +24,8 @@ mSEED files are typically named following a standard format reflecting metadata 
 
 ```python
 st1 = read(file1)  
-st2 = read(file2)  
+st2 = read(file2)
+st = st1 + st2
 ```
 Read the paths of the first and second files, then merge `st1` and `st2` into a single stream.
 ```python
