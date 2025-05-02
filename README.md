@@ -65,7 +65,7 @@ Display both standard and cumulative PPSD results.
 ppsd.plot()
 ppsd.plot(cumulative=True)
 ```
-![Plot PPSD](CTR0_2024full.png)
+![Plot PPSD]("CTR0_2024full.png")
 
 ---
 To visualize the noise distribution, you can use the standard PQLX colormap.
@@ -73,7 +73,7 @@ To visualize the noise distribution, you can use the standard PQLX colormap.
 from obspy.imaging.cm import pqlx
 ppsd.plot(cmap=pqlx)
 ```
-![Plot PPSD](CTR0_7hari_PSD.png)
+![Plot PPSD_Colormap_PQLX]("CTR0_7hari_PSD.png")
 
 
 ## Conclusion
